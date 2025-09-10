@@ -1,4 +1,3 @@
-// src/main/java/eu/europa/ec/estat/e4/fluxobiapi/controller/ExpenseController.java
 package eu.europa.ec.estat.e4.fluxobiapi.controller;
 
 import eu.europa.ec.estat.e4.fluxobiapi.domain.Expense;

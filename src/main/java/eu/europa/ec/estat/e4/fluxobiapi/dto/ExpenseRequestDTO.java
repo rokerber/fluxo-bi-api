@@ -1,4 +1,3 @@
-// src/main/java/eu/europa/ec/estat/e4/fluxobiapi/controller/dto/ExpenseRequestDTO.java
 package eu.europa.ec.estat.e4.fluxobiapi.dto;
 
 import java.math.BigDecimal;
