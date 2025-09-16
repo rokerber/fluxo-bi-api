@@ -12,14 +12,7 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addMapping("/**")
                 .allowedOrigins(
                         "http://localhost:4200",
-                        "https://washing-news-bedford-reviewer.trycloudflare.com",
-                        "https://reporting-males-fancy-despite.trycloudflare.com",
-                        "https://cut-calculation-proud-omissions.trycloudflare.com",
-                        "https://harvard-commissions-feel-starting.trycloudflare.com",
-                        "https://cut-calculation-proud-omissions.trycloudflare.com",
-                        "https://harvard-commissions-feel-starting.trycloudflare.com",
-                        "https://safer-rick-scenic-architect.trycloudflare.com",
-                        "https://speaks-reveals-meaningful-negotiation.trycloudflare.com"
+                        "https://*.trycloudflare.com"
                 )
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
