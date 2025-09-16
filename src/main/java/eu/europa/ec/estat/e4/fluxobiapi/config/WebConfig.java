@@ -13,8 +13,6 @@ public class WebConfig implements WebMvcConfigurer {
                 .allowedOrigins(
                         "http://localhost:4200",
                         "https://safer-rick-scenic-architect.trycloudflare.com",
-                        "https://speaks-reveals-meaningful-negotiation.trycloudflare.com",
-                        "https://safer-rick-scenic-architect.trycloudflare.com",
                         "https://speaks-reveals-meaningful-negotiation.trycloudflare.com"
                 )
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
