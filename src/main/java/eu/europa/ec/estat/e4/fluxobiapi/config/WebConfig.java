@@ -12,11 +12,7 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addMapping("/**")
                 .allowedOrigins(
                         "http://localhost:4200",
-                        "https://c93270466bef.ngrok-free.app/",
-                        "https://fluxo-bi-ui.sp1.br.saveincloud.net.br",
-                        // URLs dos túneis Cloudflare
-                        "https://graphs-semiconductor-thomson-beginning.trycloudflare.com", // fluxo-bi-ui-dev
-                        "https://syndication-thereafter-cement-junior.trycloudflare.com"   // fluxo-bi-ui-staging
+                        "https://fluxo-bi-ui.sp1.br.saveincloud.net.br"
                 )
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
