@@ -6,50 +6,35 @@ metadata:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: fluxo-bi-api-deployment
+  name: fluxo-bi-ui-deployment
   namespace: dev
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: fluxo-bi-api
+      app: fluxo-bi-ui
   template:
     metadata:
       labels:
-        app: fluxo-bi-api
+        app: fluxo-bi-ui
     spec:
       containers:
-        - name: fluxo-bi-api-container
-          image: fluxo-bi-api:placeholder
-          imagePullPolicy: IfNotPresent
+        - name: fluxo-bi-ui-container
+          image: k3rb3rdock/fluxo-bi-ui:initial # Uma imagem placeholder inicial
           ports:
-            - containerPort: 8080
+            - containerPort: 80
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: fluxo-bi-api-service
+  name: fluxo-bi-ui-service
   namespace: dev
 spec:
   selector:
-    app: fluxo-bi-api
+    app: fluxo-bi-ui
   ports:
     - protocol: TCP
-      port: 8080
-      targetPort: 8080
-  type: ClusterIP
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: fluxo-bi-api-nodeport
-  namespace: dev
-spec:
-  selector:
-    app: fluxo-bi-api
-  ports:
-    - protocol: TCP
-      port: 8080
-      targetPort: 8080
-      nodePort: 30092  # Porta livre
+      port: 80
+      targetPort: 80
+      nodePort: 30092 # A porta que abriremos para o mundo exterior
   type: NodePort
