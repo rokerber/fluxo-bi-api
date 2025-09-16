@@ -82,7 +82,6 @@ spec:
       nodePort: 30086 # <-- A porta que abrimos no nosso "túnel"
   type: NodePort # <-- O tipo de serviço que nos dá acesso externo direto
 
-
 # Adicione este service no seu k8s/staging.yaml
 ---
 apiVersion: v1
