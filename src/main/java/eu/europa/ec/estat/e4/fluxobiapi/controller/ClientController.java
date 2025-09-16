@@ -3,10 +3,12 @@ package eu.europa.ec.estat.e4.fluxobiapi.controller;
 import eu.europa.ec.estat.e4.fluxobiapi.domain.Client;
 import eu.europa.ec.estat.e4.fluxobiapi.repository.ClientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -49,12 +51,21 @@ public class ClientController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteClient(@PathVariable Long id) {
-        Optional<Client> clientOptional = clientRepository.findById(id);
-        if (clientOptional.isEmpty()) {
-            return ResponseEntity.notFound().build();
+    public ResponseEntity<?> deleteClient(@PathVariable Long id) {
+        try {
+            Optional<Client> clientOptional = clientRepository.findById(id);
+            if (clientOptional.isEmpty()) {
+                return ResponseEntity.notFound().build();
+            }
+            clientRepository.delete(clientOptional.get());
+            return ResponseEntity.noContent().build();
+        } catch (DataIntegrityViolationException e) {
+            return ResponseEntity.badRequest()
+                    .body(Map.of(
+                            "error", "REFERENTIAL_INTEGRITY_VIOLATION",
+                            "message", "Este cliente não pode ser excluído pois está vinculado a receitas ou despesas.",
+                            "suggestion", "Remova primeiro todas as receitas/despesas associadas a este cliente."
+                    ));
         }
-        clientRepository.delete(clientOptional.get());
-        return ResponseEntity.noContent().build();
     }
 }
