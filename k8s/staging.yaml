@@ -8,22 +8,22 @@ metadata:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: consorcio-api-deployment
+  name: fluxo-bi-api-deployment
   namespace: staging
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: consorcio-api
+      app: fluxo-bi-api
   template:
     metadata:
       labels:
-        app: consorcio-api
+        app: fluxo-bi-api
     spec:
       containers:
-        - name: consorcio-api-container
+        - name: fluxo-bi-api-container
           # Esta linha será substituída pelo pipeline!
-          image: consorcio-api:placeholder
+          image: fluxo-bi-api:placeholder
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
@@ -32,11 +32,11 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: consorcio-api-service
+  name: fluxo-bi-api-service
   namespace: staging
 spec:
   selector:
-    app: consorcio-api
+    app: fluxo-bi-api
   ports:
     - protocol: TCP
       port: 8080
@@ -47,21 +47,21 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: consorcio-front-deployment
+  name: fluxo-bi-ui-deployment
   namespace: staging
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: consorcio-front
+      app: fluxo-bi-ui
   template:
     metadata:
       labels:
-        app: consorcio-front
+        app: fluxo-bi-ui
     spec:
       containers:
-        - name: consorcio-front-container
-          image: consorcio-front:0.0.1
+        - name: fluxo-bi-ui-container
+          image: fluxo-bi-ui:0.0.1
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 80
@@ -70,11 +70,11 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: consorcio-front-service
+  name: fluxo-bi-ui-service
   namespace: staging
 spec:
   selector:
-    app: consorcio-front
+    app: fluxo-bi-ui
   ports:
     - protocol: TCP
       port: 80
@@ -87,14 +87,14 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: consorcio-api-nodeport
+  name: fluxo-bi-api-nodeport
   namespace: staging
 spec:
   selector:
-    app: consorcio-api
+    app: fluxo-bi-api
   ports:
     - protocol: TCP
       port: 8080
       targetPort: 8080
-      nodePort: 30094  # Escolha uma porta livre
+      nodePort: 30093  # Escolha uma porta livre
   type: NodePort

@@ -1,6 +1,6 @@
 kind: pipeline
 type: docker
-name: consorcio-bi-api-pipeline
+name: fluxo-bi-api-pipeline
 
 # Gatilho: Executa em pushes para a branch 'main' e em qualquer pull request.
 trigger:
@@ -23,8 +23,8 @@ steps:
     image: plugins/docker
     settings:
       registry: docker.io
-      # Nome do repositório da imagem. Ex: "username/consorcio-bi-api"
-      repo: k3rb3rdock/consorcio-bi-api
+      # Nome do repositório da imagem. Ex: "username/fluxo-bi-api"
+      repo: k3rb3rdock/fluxo-bi-api
       # Tags da imagem. 'latest' e o hash do commit são boas práticas.
       tags:
         - latest
@@ -56,7 +56,7 @@ steps:
       - echo "$KUBE_CONFIG" > ~/.kube/config
       # ATUALIZA A IMAGEM: Substitui a tag da imagem no manifesto pelo hash do commit
       # IMPORTANTE: Este comando espera que o manifesto esteja em 'k8s/manifests.yaml'
-      - "sed -i 's|image: consorcio-bi-api:.*|image: k3rb3rdock/consorcio-bi-api:${DRONE_COMMIT_SHA:0:7}|g' k8s/dev.yaml k8s/dev.yaml"
+      - "sed -i 's|image: fluxo-bi-api:.*|image: k3rb3rdock/fluxo-bi-api:${DRONE_COMMIT_SHA:0:7}|g' k8s/dev.yaml k8s/dev.yaml"
       # APLICA O MANIFESTO DE DEV
       - kubectl apply -f k8s/dev.yaml
       # APLICA O MANIFESTO DE STAGING
