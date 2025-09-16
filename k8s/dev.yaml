@@ -1,10 +1,8 @@
-# --- Namespace ---
 apiVersion: v1
 kind: Namespace
 metadata:
   name: dev
 ---
-# --- DEPLOYMENT DA API ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -22,13 +20,11 @@ spec:
     spec:
       containers:
         - name: fluxo-bi-api-container
-          # Esta linha será substituída pelo pipeline!
           image: fluxo-bi-api:placeholder
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
 ---
-# --- SERVICE DA API (INTERNO) ---
 apiVersion: v1
 kind: Service
 metadata:
@@ -43,47 +39,6 @@ spec:
       targetPort: 8080
   type: ClusterIP
 ---
-# --- DEPLOYMENT DO FRONTEND ---
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: fluxo-bi-ui-deployment
-  namespace: dev
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: fluxo-bi-ui
-  template:
-    metadata:
-      labels:
-        app: fluxo-bi-ui
-    spec:
-      containers:
-        - name: fluxo-bi-ui-container
-          image: fluxo-bi-ui:0.0.1
-          imagePullPolicy: IfNotPresent
-          ports:
-            - containerPort: 80
----
-# --- SERVICE DO FRONTEND (A NOSSA PONTE!) ---
-apiVersion: v1
-kind: Service
-metadata:
-  name: fluxo-bi-ui-service
-  namespace: dev
-spec:
-  selector:
-    app: fluxo-bi-ui
-  ports:
-    - protocol: TCP
-      port: 80
-      targetPort: 80
-      nodePort: 30085 # <-- A porta que abrimos no nosso "túnel"
-  type: NodePort # <-- O tipo de serviço que nos dá acesso externo direto
-
-# Adicione este service no seu k8s/dev.yaml
----
 apiVersion: v1
 kind: Service
 metadata:
@@ -96,5 +51,5 @@ spec:
     - protocol: TCP
       port: 8080
       targetPort: 8080
-      nodePort: 30092 # Escolha uma porta livre
+      nodePort: 30092  # Porta livre
   type: NodePort
