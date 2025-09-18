@@ -6,26 +6,24 @@ on:
 
 env:
   IMAGE_NAME: k3rb3rdock/fluxo-bi-api
-  # URL de clone que o runner irá usar, com o token de acesso.
-  # Usamos o IP do host (que o runner consegue alcançar via host.docker.internal)
-  # e a porta mapeada do Gitea (3001).
-  CLONE_URL: http://oauth2:${{ secrets.ACTION_TOKEN }}@host.docker.internal:3001/${{ gitea.repository }}.git
+  # AQUI ESTÁ A MUDANÇA FINAL: Usando o IP real da sua máquina host.
+  # Esta é a única URL que o contêiner do job consegue alcançar.
+  CLONE_URL: http://oauth2:${{ secrets.ACTION_TOKEN }}@192.168.40.70:3001/${{ gitea.repository }}.git
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      # Passo 1: Fazer o clone manualmente usando a URL que NÓS controlamos.
+      # Usando o nosso clone manual com a URL que sabemos que vai funcionar.
       - name: Checkout repository
         run: |
-          echo "Cloning repository manually from host..."
-          # Adiciona uma configuração extra para que o git confie no repositório
+          echo "Cloning repository manually from host IP..."
           git config --global --add safe.directory /workspace/${{ gitea.repository }}
           git clone --branch ${{ gitea.ref_name }} ${{ env.CLONE_URL }} .
           echo "Clone complete."
 
-      # Passo 2: Configurar o Java
+      # O resto da pipeline permanece igual.
       - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
@@ -33,7 +31,6 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
-      # O resto da pipeline permanece exatamente o mesmo
       - name: Build with Maven
         run: mvn -B package --file pom.xml
 
@@ -60,7 +57,7 @@ jobs:
           KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
         with:
           args: |
-            # Corrigindo o caminho para a pasta k8s
             sed -i 's|image:.*|image: ${{ env.IMAGE_NAME }}:${{ gitea.sha }}|g' k8s/dev.yaml
             kubectl apply -f k8s/dev.yaml
             echo "Deploy concluído com a imagem ${{ env.IMAGE_NAME }}:${{ gitea.sha }}"
+
