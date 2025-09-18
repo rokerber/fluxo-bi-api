@@ -1,4 +1,4 @@
-name: Simple Clone Test
+name: Test Internal Network
 
 on:
   push:
@@ -9,14 +9,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Direct git clone
+      - name: Clone using internal network
         run: |
-          echo "Tentando clone direto..."
-          git clone http://192.168.40.70:3001/kerber/fluxo-bi-api.git . 
+          echo "Cloning from internal Gitea IP..."
+          git clone http://172.18.0.4:3000/kerber/fluxo-bi-api.git .
 
       - name: Show files
         run: |
-          echo "Arquivos clonados:"
+          echo "Repository contents:"
           ls -la
-          echo "pom.xml existe:"
-          cat pom.xml | head -5
+          cat pom.xml | head -10
