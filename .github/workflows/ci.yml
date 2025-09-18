@@ -8,7 +8,7 @@ env:
   IMAGE_NAME: k3rb3rdock/fluxo-bi-api
   # AQUI ESTÁ A MUDANÇA FINAL: Usando o IP real da sua máquina host.
   # Esta é a única URL que o contêiner do job consegue alcançar.
-  CLONE_URL: http://oauth2:${{ secrets.ACTION_TOKEN }}@192.168.40.70:3001/${{ gitea.repository }}.git
+  CLONE_URL: http://oauth2:${{ secrets.ACTION_TOKEN }}@localhost:3001/${{ gitea.repository }}.git
 
 jobs:
   build-and-deploy:
