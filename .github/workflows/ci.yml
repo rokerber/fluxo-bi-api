@@ -1,4 +1,4 @@
-name: Test Manual Checkout
+name: Test Direct IP
 
 on:
   push:
@@ -9,9 +9,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Manual git clone
+      - name: Test network
         run: |
-          git clone http://gitea:3000/kerber/fluxo-bi-api.git .
-          echo "Repository cloned successfully!"
-          ls -la
-          find . -name "pom.xml"
+          echo "Testing network connectivity..."
+          ping -c 2 gitea || echo "gitea hostname failed"
+
+      - name: Get Gitea IP and clone
+        run: |
+          # Use container IP directly
+          GITEA_IP=$(getent hosts gitea | awk '{ print $1 }')
+          echo "Gitea IP: $GITEA_IP"
+          git clone http://$GITEA_IP:3000/kerber/fluxo-bi-api.git . || \
+          git clone http://172.18.0.2:3000/kerber/fluxo-bi-api.git .
