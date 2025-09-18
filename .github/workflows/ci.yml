@@ -1,4 +1,4 @@
-name: CI/CD Pipeline
+name: Java Spring Boot CI/CD
 
 on:
   push:
@@ -6,27 +6,127 @@ on:
   pull_request:
     branches: [ main, master ]
 
+env:
+  JAVA_VERSION: '17'
+  MAVEN_OPTS: '-Xmx1024m'
+  IMAGE_NAME: fluxo-bi-api
+  IMAGE_TAG: ${{ gitea.sha }}
+
 jobs:
-  build-and-test:
+  test:
     runs-on: ubuntu-latest
+    name: Test & Build
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Show repository info
-        run: |
-          echo "Repository: ${{ gitea.repository }}"
-          echo "Branch: ${{ gitea.ref }}"
-          echo "Commit: ${{ gitea.sha }}"
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
 
-      - name: List files
-        run: |
-          echo "Files in repository:"
-          ls -la
+      - name: Cache Maven dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
 
-      - name: Test connection
+      - name: Run tests
         run: |
-          echo "✅ Pipeline funcionando!"
-          echo "✅ Runner conectado com sucesso!"
-          echo "✅ Pronto para deploy!"
+          echo "Running Maven tests..."
+          mvn clean test
+
+      - name: Build application
+        run: |
+          echo "Building Spring Boot application..."
+          mvn clean package -DskipTests
+
+      - name: List target directory
+        run: |
+          echo "Generated JAR files:"
+          ls -la target/
+
+      - name: Upload JAR artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: jar-artifact
+          path: target/*.jar
+
+  docker-build:
+    runs-on: ubuntu-latest
+    name: Build Docker Image
+    needs: test
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Download JAR artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: jar-artifact
+          path: target/
+
+      - name: Build Docker image
+        run: |
+          echo "Building Docker image..."
+          docker build -t $IMAGE_NAME:$IMAGE_TAG .
+          docker tag $IMAGE_NAME:$IMAGE_TAG $IMAGE_NAME:latest
+
+      - name: List Docker images
+        run: |
+          echo "Docker images built:"
+          docker images | grep $IMAGE_NAME
+
+  deploy:
+    runs-on: ubuntu-latest
+    name: Deploy to K3s
+    needs: [test, docker-build]
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup kubectl
+        uses: azure/setup-kubectl@v3
+        with:
+          version: 'latest'
+
+      - name: Configure kubeconfig
+        run: |
+          echo "${{ secrets.KUBECONFIG }}" | base64 -d > /tmp/kubeconfig
+          # Fix server IP - replace 127.0.0.1 with actual server IP
+          sed -i 's/127.0.0.1:6443/192.168.40.70:6443/g' /tmp/kubeconfig
+          export KUBECONFIG=/tmp/kubeconfig
+          kubectl cluster-info
+
+      - name: Update deployment manifest
+        run: |
+          # Replace placeholder with actual image tag
+          sed -i "s|fluxo-bi-api:placeholder|$IMAGE_NAME:$IMAGE_TAG|g" k8s/dev.yaml
+
+      - name: Apply Kubernetes manifests
+        run: |
+          export KUBECONFIG=/tmp/kubeconfig
+          echo "Applying Kubernetes manifests..."
+          kubectl apply -f k8s/dev.yaml
+
+      - name: Wait for deployment
+        run: |
+          export KUBECONFIG=/tmp/kubeconfig
+          echo "Waiting for deployment to be ready..."
+          kubectl rollout status deployment/fluxo-bi-api-deployment -n dev --timeout=300s
+
+      - name: Get service info
+        run: |
+          export KUBECONFIG=/tmp/kubeconfig
+          echo "Service information:"
+          kubectl get services -n dev
+          echo "Deployment pods:"
+          kubectl get pods -n dev
