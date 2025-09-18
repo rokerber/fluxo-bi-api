@@ -1,4 +1,4 @@
-name: Test Direct IP Fixed
+name: Test Correct Port
 
 on:
   push:
@@ -9,18 +9,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Clone repository using direct IP
+      - name: Test both ports
         run: |
-          echo "Cloning repository from 172.18.0.4:3000..."
-          git clone http://172.18.0.4:3000/kerber/fluxo-bi-api.git .
+          echo "Testing port 3000 (internal)..."
+          curl -I http://172.18.0.4:3000/ || echo "Port 3000 failed"
+          
+          echo "Testing port 3001 (external)..."
+          curl -I http://172.18.0.4:3001/ || echo "Port 3001 failed"
 
-      - name: Verify repository contents
+      - name: Clone with correct port
         run: |
-          echo "Current directory:"
-          pwd
-          echo "Repository files:"
-          ls -la
-          echo "Found pom.xml:"
-          ls -la pom.xml
-          echo "Java files count:"
-          find . -name "*.java" | wc -l
+          echo "Cloning from correct port..."
+          git clone http://172.18.0.4:3000/kerber/fluxo-bi-api.git . || \
+          git clone http://172.18.0.4:3001/kerber/fluxo-bi-api.git .
