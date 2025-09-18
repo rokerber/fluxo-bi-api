@@ -11,6 +11,25 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # ====================================================================
+      # PASSO DE DEBUG TEMPORÁRIO - ADICIONE ESTE BLOCO
+      # ====================================================================
+      - name: Debug Network
+        run: |
+          echo "--- Verificando IP do Contêiner ---"
+          hostname -i
+
+          echo "--- Verificando Configuração de DNS (/etc/resolv.conf) ---"
+          cat /etc/resolv.conf
+
+          echo "--- Verificando todas as interfaces de rede (ip a) ---"
+          ip a
+
+          echo "--- Tentando pingar o 'gitea' diretamente ---"
+          ping -c 4 gitea
+        # ====================================================================
+        # FIM DO PASSO DE DEBUG
+        # ====================================================================
       # 1. Baixa o código do repositório para o ambiente da pipeline
       - name: Checkout repository
         uses: actions/checkout@v3
