@@ -12,7 +12,7 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addMapping("/**")
                 .allowedOrigins(
                         "http://localhost:4200",
-                        "ttps://consorcio-bi-ui.sp1.br.saveincloud.net.br"
+                        "https://fluxo-bi-ui.sp1.br.saveincloud.net.br"
                 )
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
