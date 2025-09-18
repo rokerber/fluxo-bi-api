@@ -1,4 +1,4 @@
-name: Test Correct Port
+name: Simple Clone Test
 
 on:
   push:
@@ -9,16 +9,14 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Test both ports
+      - name: Direct git clone
         run: |
-          echo "Testing port 3000 (internal)..."
-          curl -I http://172.18.0.4:3000/ || echo "Port 3000 failed"
-          
-          echo "Testing port 3001 (external)..."
-          curl -I http://172.18.0.4:3001/ || echo "Port 3001 failed"
+          echo "Tentando clone direto..."
+          git clone http://192.168.40.70:3001/kerber/fluxo-bi-api.git . 
 
-      - name: Clone with correct port
+      - name: Show files
         run: |
-          echo "Cloning from correct port..."
-          git clone http://172.18.0.4:3000/kerber/fluxo-bi-api.git . || \
-          git clone http://172.18.0.4:3001/kerber/fluxo-bi-api.git .
+          echo "Arquivos clonados:"
+          ls -la
+          echo "pom.xml existe:"
+          cat pom.xml | head -5
