@@ -1,26 +1,22 @@
-name: Debug Test
+name: Test Runner Fixed
 
 on:
   push:
     branches: [ main, master ]
 
 jobs:
-  debug:
+  test:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Basic test
-        run: |
-          echo "Testing runner..."
-          pwd
-          ls -la
-          whoami
-
-      - name: Test checkout
+      - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: After checkout
+      - name: Verify checkout
         run: |
-          echo "After checkout:"
+          echo "Current directory:"
           pwd
+          echo "Files in repository:"
           ls -la
+          echo "Check for Java files:"
+          find . -name "*.java" -o -name "pom.xml" | head -5
