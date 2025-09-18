@@ -1,4 +1,4 @@
-name: Test Runner Fixed
+name: Test Manual Checkout
 
 on:
   push:
@@ -9,14 +9,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Verify checkout
+      - name: Manual git clone
         run: |
-          echo "Current directory:"
-          pwd
-          echo "Files in repository:"
+          git clone http://gitea:3000/kerber/fluxo-bi-api.git .
+          echo "Repository cloned successfully!"
           ls -la
-          echo "Check for Java files:"
-          find . -name "*.java" -o -name "pom.xml" | head -5
+          find . -name "pom.xml"
