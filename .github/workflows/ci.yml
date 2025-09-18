@@ -1,4 +1,4 @@
-name: Test Direct IP
+name: Test Direct IP Fixed
 
 on:
   push:
@@ -9,16 +9,18 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Clone repository using IP
+      - name: Clone repository using direct IP
         run: |
-          echo "Cloning using direct IP..."
+          echo "Cloning repository from 172.18.0.4:3000..."
           git clone http://172.18.0.4:3000/kerber/fluxo-bi-api.git .
 
-      - name: Verify clone success
+      - name: Verify repository contents
         run: |
-          echo "Files in repository:"
+          echo "Current directory:"
+          pwd
+          echo "Repository files:"
           ls -la
           echo "Found pom.xml:"
-          cat pom.xml | head -10
-          echo "Java source files:"
-          find . -name "*.java" | head -5
+          ls -la pom.xml
+          echo "Java files count:"
+          find . -name "*.java" | wc -l
