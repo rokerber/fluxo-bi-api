@@ -2,15 +2,14 @@ name: CI/CD - Build and Deploy to K3s
 
 on:
   push:
-    branches: [ main ] # Gatilho para a branch 'main'
+    branches: [ main ]
 
 env:
-  # ATENÇÃO: Mude 'seu-usuario-dockerhub' para o seu usuário no Docker Hub ou outro registro
-  IMAGE_NAME: seu-usuario-dockerhub/fluxo-bi-api
+  IMAGE_NAME: k3rb3rdock/fluxo-bi-api
 
 jobs:
   build-and-deploy:
-    runs-on: ubuntu-latest # O job vai rodar em um ambiente Ubuntu
+    runs-on: ubuntu-latest
 
     steps:
       # 1. Baixa o código do repositório para o ambiente da pipeline
