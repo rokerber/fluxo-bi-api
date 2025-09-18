@@ -9,15 +9,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Test network
+      - name: Clone repository using IP
         run: |
-          echo "Testing network connectivity..."
-          ping -c 2 gitea || echo "gitea hostname failed"
+          echo "Cloning using direct IP..."
+          git clone http://172.18.0.4:3000/kerber/fluxo-bi-api.git .
 
-      - name: Get Gitea IP and clone
+      - name: Verify clone success
         run: |
-          # Use container IP directly
-          GITEA_IP=$(getent hosts gitea | awk '{ print $1 }')
-          echo "Gitea IP: $GITEA_IP"
-          git clone http://$GITEA_IP:3000/kerber/fluxo-bi-api.git . || \
-          git clone http://172.18.0.2:3000/kerber/fluxo-bi-api.git .
+          echo "Files in repository:"
+          ls -la
+          echo "Found pom.xml:"
+          cat pom.xml | head -10
+          echo "Java source files:"
+          find . -name "*.java" | head -5
